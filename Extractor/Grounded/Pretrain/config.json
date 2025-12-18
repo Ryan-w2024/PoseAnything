@@ -1,0 +1,77 @@
+{
+  "activation_dropout": 0.0,
+  "activation_function": "relu",
+  "architectures": [
+    "GroundingDinoForObjectDetection"
+  ],
+  "attention_dropout": 0.0,
+  "auxiliary_loss": false,
+  "backbone": null,
+  "backbone_config": {
+    "depths": [
+      2,
+      2,
+      6,
+      2
+    ],
+    "model_type": "swin",
+    "num_heads": [
+      3,
+      6,
+      12,
+      24
+    ],
+    "out_features": [
+      "stage2",
+      "stage3",
+      "stage4"
+    ],
+    "out_indices": [
+      2,
+      3,
+      4
+    ]
+  },
+  "backbone_kwargs": null,
+  "bbox_cost": 5.0,
+  "bbox_loss_coefficient": 5.0,
+  "class_cost": 1.0,
+  "d_model": 256,
+  "decoder_attention_heads": 8,
+  "decoder_bbox_embed_share": true,
+  "decoder_ffn_dim": 2048,
+  "decoder_layers": 6,
+  "decoder_n_points": 4,
+  "disable_custom_kernels": false,
+  "dropout": 0.1,
+  "embedding_init_target": true,
+  "encoder_attention_heads": 8,
+  "encoder_ffn_dim": 2048,
+  "encoder_layers": 6,
+  "encoder_n_points": 4,
+  "focal_alpha": 0.25,
+  "fusion_dropout": 0.0,
+  "fusion_droppath": 0.1,
+  "giou_cost": 2.0,
+  "giou_loss_coefficient": 2.0,
+  "init_std": 0.02,
+  "is_encoder_decoder": true,
+  "layer_norm_eps": 1e-05,
+  "max_text_len": 256,
+  "model_type": "grounding-dino",
+  "num_feature_levels": 4,
+  "num_queries": 900,
+  "position_embedding_type": "sine",
+  "positional_embedding_temperature": 20,
+  "query_dim": 4,
+  "text_config": {
+    "model_type": "bert"
+  },
+  "text_enhancer_dropout": 0.0,
+  "torch_dtype": "float32",
+  "transformers_version": "4.40.0.dev0",
+  "two_stage": true,
+  "two_stage_bbox_embed_share": false,
+  "use_pretrained_backbone": false,
+  "use_timm_backbone": false
+}

@@ -1,0 +1,14 @@
+cython
+opencv-python
+pillow==6.0.0
+scikit-image
+scipy
+tqdm
+matplotlib
+pandas
+albumentations>=0.3.2
+six
+terminaltables
+timm
+mmcv==1.5.3
+ninja
