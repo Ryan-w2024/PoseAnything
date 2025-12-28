@@ -104,7 +104,7 @@ def image_transform(
         aug_cfg_dict = {k: v for k, v in asdict(aug_cfg).items() if v is not None}
         use_timm = aug_cfg_dict.pop('use_timm', False)
         if use_timm:
-            assert False, "not tested for augmentation with mask"
+            assert False, "not tested for augmentation with video"
             from timm.data import create_transform  # timm can still be optional
             if isinstance(image_size, (tuple, list)):
                 assert len(image_size) >= 2

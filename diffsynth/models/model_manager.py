@@ -52,9 +52,9 @@ from ..extensions.ESRGAN import RRDBNet
 from ..configs.model_config import model_loader_configs, huggingface_model_loader_configs, patch_model_loader_configs
 from .utils import load_state_dict, init_weights_on_device, hash_state_dict_keys, split_state_dict_with_prefix
 
-
-def load_model_from_single_file(state_dict, model_names, model_classes, model_resource, torch_dtype, device):
+def load_model_from_single_file(state_dict, model_names, model_classes, model_resource, torch_dtype, device, **kwargs):
     loaded_model_names, loaded_models = [], []
+    ptc_enabled_val = kwargs.get("ptc_enabled", True)
     for model_name, model_class in zip(model_names, model_classes):
         print(f"    model_name: {model_name} model_class: {model_class.__name__}")
         state_dict_converter = model_class.state_dict_converter()
@@ -64,18 +64,24 @@ def load_model_from_single_file(state_dict, model_names, model_classes, model_re
             state_dict_results = state_dict_converter.from_diffusers(state_dict)
         if isinstance(state_dict_results, tuple):
             model_state_dict, extra_kwargs = state_dict_results
-            print(f"        This model is initialized with extra kwargs: {extra_kwargs}")
+            print(f" This model is initialized with extra kwargs: {extra_kwargs}")
         else:
             model_state_dict, extra_kwargs = state_dict_results, {}
-        torch_dtype = torch.float32 if extra_kwargs.get("upcast_to_float32", False) else torch_dtype
+        print("model_class name", model_class.__name__)
+        if model_class.__name__ == "WanModel":
+            extra_kwargs["ptc_enabled"] = ptc_enabled_val
+        current_torch_dtype = torch.float32 if extra_kwargs.get("upcast_to_float32", False) else torch_dtype
         with init_weights_on_device():
             model = model_class(**extra_kwargs)
+
         if hasattr(model, "eval"):
             model = model.eval()
         model.load_state_dict(model_state_dict, assign=True)
-        model = model.to(dtype=torch_dtype, device=device)
+        model = model.to(dtype=current_torch_dtype, device=device)
+
         loaded_model_names.append(model_name)
         loaded_models.append(model)
+
     return loaded_model_names, loaded_models
 
 
@@ -174,27 +180,27 @@ class ModelDetectorFromSingleFile:
             return True
         return False
 
-
     def load(self, file_path="", state_dict={}, device="cuda", torch_dtype=torch.float16, **kwargs):
         if len(state_dict) == 0:
             state_dict = load_state_dict(file_path)
-
-        # Load models with strict matching
+        ptc_enabled = kwargs.get("ptc_enabled", True)
         keys_hash_with_shape = hash_state_dict_keys(state_dict, with_shape=True)
         if keys_hash_with_shape in self.keys_hash_with_shape_dict:
             model_names, model_classes, model_resource = self.keys_hash_with_shape_dict[keys_hash_with_shape]
-            loaded_model_names, loaded_models = load_model_from_single_file(state_dict, model_names, model_classes, model_resource, torch_dtype, device)
+            loaded_model_names, loaded_models = load_model_from_single_file(
+                state_dict, model_names, model_classes, model_resource,
+                torch_dtype, device, ptc_enabled=ptc_enabled
+            )
             return loaded_model_names, loaded_models
-
-        # Load models without strict matching
-        # (the shape of parameters may be inconsistent, and the state_dict_converter will modify the model architecture)
         keys_hash = hash_state_dict_keys(state_dict, with_shape=False)
         if keys_hash in self.keys_hash_dict:
             model_names, model_classes, model_resource = self.keys_hash_dict[keys_hash]
-            loaded_model_names, loaded_models = load_model_from_single_file(state_dict, model_names, model_classes, model_resource, torch_dtype, device)
+            loaded_model_names, loaded_models = load_model_from_single_file(
+                state_dict, model_names, model_classes, model_resource,
+                torch_dtype, device, ptc_enabled=ptc_enabled
+            )
             return loaded_model_names, loaded_models
-
-        return loaded_model_names, loaded_models
+        return [], []
 
 
 
@@ -215,20 +221,41 @@ class ModelDetectorFromSplitedSingleFile(ModelDetectorFromSingleFile):
         return False
 
 
+    # def load(self, file_path="", state_dict={}, device="cuda", torch_dtype=torch.float16, **kwargs):
+    #     # Split the state_dict and load from each component
+    #     splited_state_dict = split_state_dict_with_prefix(state_dict)
+    #     valid_state_dict = {}
+    #     for sub_state_dict in splited_state_dict:
+    #         if super().match(file_path, sub_state_dict):
+    #             valid_state_dict.update(sub_state_dict)
+    #     if super().match(file_path, valid_state_dict):
+    #         loaded_model_names, loaded_models = super().load(file_path, valid_state_dict, device, torch_dtype)
+    #     else:
+    #         loaded_model_names, loaded_models = [], []
+    #         for sub_state_dict in splited_state_dict:
+    #             if super().match(file_path, sub_state_dict):
+    #                 loaded_model_names_, loaded_models_ = super().load(file_path, valid_state_dict, device, torch_dtype)
+    #                 loaded_model_names += loaded_model_names_
+    #                 loaded_models += loaded_models_
+    #     return loaded_model_names, loaded_models
+
     def load(self, file_path="", state_dict={}, device="cuda", torch_dtype=torch.float16, **kwargs):
-        # Split the state_dict and load from each component
         splited_state_dict = split_state_dict_with_prefix(state_dict)
         valid_state_dict = {}
         for sub_state_dict in splited_state_dict:
             if super().match(file_path, sub_state_dict):
                 valid_state_dict.update(sub_state_dict)
         if super().match(file_path, valid_state_dict):
-            loaded_model_names, loaded_models = super().load(file_path, valid_state_dict, device, torch_dtype)
+            loaded_model_names, loaded_models = super().load(
+                file_path, valid_state_dict, device, torch_dtype, **kwargs
+            )
         else:
             loaded_model_names, loaded_models = [], []
             for sub_state_dict in splited_state_dict:
                 if super().match(file_path, sub_state_dict):
-                    loaded_model_names_, loaded_models_ = super().load(file_path, valid_state_dict, device, torch_dtype)
+                    loaded_model_names_, loaded_models_ = super().load(
+                        file_path, sub_state_dict, device, torch_dtype, **kwargs
+                    )
                     loaded_model_names += loaded_model_names_
                     loaded_models += loaded_models_
         return loaded_model_names, loaded_models
@@ -394,7 +421,7 @@ class ModelManager:
                 print(f"    Cannot load LoRA: {file_path}")
 
 
-    def load_model(self, file_path, model_names=None, device=None, torch_dtype=None):
+    def load_model(self, file_path, model_names=None, device=None, torch_dtype=None, ptc_enabled=True):
         print(f"Loading models from: {file_path}")
         if device is None: device = self.device
         if torch_dtype is None: torch_dtype = self.torch_dtype
@@ -404,11 +431,8 @@ class ModelManager:
                 state_dict.update(load_state_dict(path))
         elif os.path.isfile(file_path):
             state_dict = load_state_dict(file_path)
-        elif os.path.isdir(file_path): #针对分片的diffusion模型
-            # 处理文件夹中的分片文件
+        elif os.path.isdir(file_path):
             state_dict = {}
-
-            # 首先处理 safetensors 分片
             safetensors_files = sorted([
                 f for f in os.listdir(file_path)
                 if f.startswith("diffusion_pytorch_model-") and f.endswith(".safetensors")
@@ -425,7 +449,8 @@ class ModelManager:
                 model_names, models = model_detector.load(
                     file_path, state_dict,
                     device=device, torch_dtype=torch_dtype,
-                    allowed_model_names=model_names, model_manager=self
+                    allowed_model_names=model_names, model_manager=self,
+                    ptc_enabled=ptc_enabled
                 )
                 for model_name, model in zip(model_names, models):
                     self.model.append(model)

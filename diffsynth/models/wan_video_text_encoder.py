@@ -56,7 +56,7 @@ class T5Attention(nn.Module):
         """
         x:          [B, L1, C].
         context:    [B, L2, C] or None.
-        mask:       [B, L2] or [B, L1, L2] or None.
+        video:       [B, L2] or [B, L1, L2] or None.
         """
         # check inputs
         context = x if context is None else context

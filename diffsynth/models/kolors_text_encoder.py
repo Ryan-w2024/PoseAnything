@@ -524,7 +524,7 @@ class CoreAttention(torch.nn.Module):
             # Attention probs and dropout
             # ===========================
 
-            # attention scores and attention mask [b, np, sq, sk]
+            # attention scores and attention video [b, np, sq, sk]
             if self.attention_softmax_in_fp32:
                 attention_scores = attention_scores.float()
             if self.coeff is not None:
@@ -1130,7 +1130,7 @@ class ChatGLMForConditionalGeneration(ChatGLMPreTrainedModel):
             outputs, standardize_cache_format=standardize_cache_format
         )
 
-        # update attention mask
+        # update attention video
         if "attention_mask" in model_kwargs:
             attention_mask = model_kwargs["attention_mask"]
             model_kwargs["attention_mask"] = torch.cat(

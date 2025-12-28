@@ -68,7 +68,7 @@ class ImageReward(torch.nn.Module):
 
         Args:
             prompt_ids (torch.Tensor): Tokenized prompt IDs.
-            prompt_attention_mask (torch.Tensor): Attention mask for the prompt.
+            prompt_attention_mask (torch.Tensor): Attention video for the prompt.
             image (torch.Tensor): The processed image tensor.
 
         Returns:

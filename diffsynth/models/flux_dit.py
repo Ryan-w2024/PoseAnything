@@ -349,7 +349,7 @@ class FluxDiT(torch.nn.Module):
 
         image_start = N * prompt_seq_len
         image_end = N * prompt_seq_len + image_seq_len
-        # prompt-image mask
+        # prompt-image video
         for i in range(N):
             prompt_start = i * prompt_seq_len
             prompt_end = (i + 1) * prompt_seq_len
@@ -359,7 +359,7 @@ class FluxDiT(torch.nn.Module):
             attention_mask[:, prompt_start:prompt_end, image_start:image_end] = image_mask
             # image update with prompt
             attention_mask[:, image_start:image_end, prompt_start:prompt_end] = image_mask.transpose(1, 2)
-        # prompt-prompt mask
+        # prompt-prompt video
         for i in range(N):
             for j in range(N):
                 if i != j:
@@ -384,10 +384,10 @@ class FluxDiT(torch.nn.Module):
             batch_size, max_masks = entity_masks.shape[0], entity_masks.shape[1]
             entity_masks = entity_masks.repeat(1, 1, repeat_dim, 1, 1)
             entity_masks = [entity_masks[:, i, None].squeeze(1) for i in range(max_masks)]
-            # global mask
+            # global video
             global_mask = torch.ones_like(entity_masks[0]).to(device=hidden_states.device, dtype=hidden_states.dtype)
             entity_masks = entity_masks + [global_mask] # append global to last
-            # attention mask
+            # attention video
             attention_mask = self.construct_mask(entity_masks, prompt_emb.shape[1], hidden_states.shape[1])
             attention_mask = attention_mask.to(device=hidden_states.device, dtype=hidden_states.dtype)
             attention_mask = attention_mask.unsqueeze(1)

@@ -82,8 +82,10 @@ def main():
     parser.add_argument('--model_path', type=str, required=True, help='Path to the generation model weights')
     parser.add_argument('--pretrained_path', type=str, required=True, help='Path to the pretrained model directory')
     parser.add_argument('--max_size', type=int, default=832, help='Maximum length of the longest side for input images')
+    parser.add_argument("--disable_ptc", action='store_true', help="If set, PTC modules will be disabled.")
     args = parser.parse_args()
 
+    ptc_enabled = not args.disable_ptc
     local_rank = get_local_rank()
 
     if not dist.is_initialized():
@@ -153,6 +155,7 @@ def main():
                 origin_file_pattern="Wan2.2_VAE.pth",
                 offload_device="cpu"),
         ],
+        ptc_enabled=ptc_enabled
     )
 
     pipe.enable_vram_management()

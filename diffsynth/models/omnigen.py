@@ -20,7 +20,7 @@ logger = logging.get_logger(__name__)
 class Phi3Transformer(Phi3Model):
     """
     Transformer decoder consisting of *config.num_hidden_layers* layers. Each layer is a [`Phi3DecoderLayer`]
-    We only modified the attention mask
+    We only modified the attention video
     Args:
         config: Phi3Config
     """

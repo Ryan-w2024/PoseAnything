@@ -530,7 +530,7 @@ class WanS2VModel(torch.nn.Module):
         ref_latents, (rf, rh, rw) = self.patchify(self.patch_embedding(origin_ref_latents))  # torch.Size([1, 1456, 5120])
         grid_sizes = self.get_grid_sizes((f, h, w), (rf, rh, rw))
         x = torch.cat([x, ref_latents], dim=1)
-        # mask
+        # video
         mask = torch.cat([torch.zeros([1, seq_len_x]), torch.ones([1, ref_latents.shape[1]])], dim=1).to(torch.long).to(x.device)
         # freqs
         pre_compute_freqs = rope_precompute(

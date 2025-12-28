@@ -143,7 +143,7 @@ class SVDVideoPipeline(BasePipeline):
             latents = self.encode_video_with_vae(input_video)
             latents = self.scheduler.add_noise(latents, noise, self.scheduler.timesteps[0])
 
-        # Prepare mask frames
+        # Prepare video frames
         if len(mask_frames) > 0:
             mask_latents = self.encode_video_with_vae(mask_frames)
 

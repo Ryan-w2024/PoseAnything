@@ -300,7 +300,7 @@ class OmostPromter(torch.nn.Module):
         canvas_output["prompt"] = prompts[0]
         canvas_output["prompts"] = prompts[1:]
         
-        raw_masks = [_["mask"] for _ in canvas_output["bag_of_conditions"]]
+        raw_masks = [_["video"] for _ in canvas_output["bag_of_conditions"]]
         masks=[]
         for mask in raw_masks:
             mask[mask>0.5]=255

@@ -322,6 +322,7 @@ class WanVideoPipeline(BasePipeline):
         tokenizer_config: ModelConfig = ModelConfig(model_id="Wan-AI/Wan2.1-T2V-1.3B", origin_file_pattern="google/*"),
         audio_processor_config: ModelConfig = None,
         redirect_common_files: bool = True,
+        ptc_enabled: bool = True,  #added
         use_usp=False,
     ):
         # Redirect model path
@@ -349,7 +350,8 @@ class WanVideoPipeline(BasePipeline):
             model_manager.load_model(
                 model_config.path,
                 device=model_config.offload_device or device,
-                torch_dtype=model_config.offload_dtype or torch_dtype
+                torch_dtype=model_config.offload_dtype or torch_dtype,
+                ptc_enabled=ptc_enabled,  # added
             )
         
         # Load models
@@ -533,7 +535,6 @@ class WanVideoPipeline(BasePipeline):
             del inputs_shared["latents"]
             inputs_shared["latents"] = latents
 
-
             print("attn_weights shape", attn_weights.shape)
             _, _, _, h, w = inputs_shared["latents"].shape
             b, num_heads, seq_length, total_length = attn_weights.shape
@@ -576,9 +577,6 @@ class WanVideoPipeline(BasePipeline):
         else:
             union_mask = None
             first_masks = None
-
-        print("line 580")
-
 
         for progress_id, timestep in enumerate(progress_bar_cmd(self.scheduler.timesteps)):
             # Switch DiT if necessary
@@ -1470,7 +1468,7 @@ def model_fn_wans2v(
     ref_latents, (rf, rh, rw) = dit.patchify(dit.patch_embedding(origin_ref_latents))
     grid_sizes = dit.get_grid_sizes((f, h, w), (rf, rh, rw))
     x = torch.cat([x, ref_latents], dim=1)
-    # mask
+    # video
     mask = torch.cat([torch.zeros([1, seq_len_x]), torch.ones([1, ref_latents.shape[1]])], dim=1).to(torch.long).to(x.device)
     # freqs
     pre_compute_freqs = rope_precompute(x.detach().view(1, x.size(1), dit.num_heads, dit.dim // dit.num_heads), grid_sizes, dit.freqs, start=None)

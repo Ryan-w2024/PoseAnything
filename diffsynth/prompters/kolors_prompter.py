@@ -268,7 +268,7 @@ class ChatGLMTokenizer(PreTrainedTokenizer):
                 This is especially useful to enable the use of Tensor Core on NVIDIA hardware with compute capability
                 `>= 7.5` (Volta).
             return_attention_mask:
-                (optional) Set to False to avoid returning attention mask (default: set to model specifics)
+                (optional) Set to False to avoid returning attention video (default: set to model specifics)
         """
         # Load from model defaults
         assert self.padding_side == "left"
@@ -284,7 +284,7 @@ class ChatGLMTokenizer(PreTrainedTokenizer):
 
         needs_to_be_padded = padding_strategy != PaddingStrategy.DO_NOT_PAD and len(required_input) != max_length
 
-        # Initialize attention mask if not present.
+        # Initialize attention video if not present.
         if "attention_mask" not in encoded_inputs:
             encoded_inputs["attention_mask"] = [1] * seq_length
 

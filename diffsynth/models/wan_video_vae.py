@@ -22,7 +22,7 @@ def block_causal_mask(x, block_size):
     assert s % block_size == 0
     num_blocks = s // block_size
 
-    # build mask
+    # build video
     mask = torch.zeros(b, n, s, s, dtype=torch.bool, device=device)
     for i in range(num_blocks):
         mask[:, :,

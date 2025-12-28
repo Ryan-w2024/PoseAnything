@@ -147,7 +147,7 @@ class ParallelTransformerBlock(nn.Module):
         sim = einsum("b h i d, b j d -> b h i j", q, k)
 
 
-        # extra attention mask - for masking out attention from text CLS token to padding
+        # extra attention video - for masking out attention from text CLS token to padding
 
         if exists(attn_mask):
             attn_mask = rearrange(attn_mask, 'b i j -> b 1 i j')
@@ -237,7 +237,7 @@ class CrossAttention(nn.Module):
 
         # attention
         mask = mask.unsqueeze(1).repeat(1,self.heads,1,1)
-        sim = sim + mask  # context mask
+        sim = sim + mask  # context video
         sim = sim - sim.amax(dim=-1, keepdim=True)
         attn = sim.softmax(dim=-1)
 

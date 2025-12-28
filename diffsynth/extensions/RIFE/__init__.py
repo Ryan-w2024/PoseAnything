@@ -91,7 +91,7 @@ class IFNet(nn.Module):
         '''
         c0 = self.contextnet(img0, flow[:, :2])
         c1 = self.contextnet(img1, flow[:, 2:4])
-        tmp = self.unet(img0, img1, warped_img0, warped_img1, mask, flow, c0, c1)
+        tmp = self.unet(img0, img1, warped_img0, warped_img1, video, flow, c0, c1)
         res = tmp[:, 1:4] * 2 - 1
         '''
         for i in range(3):

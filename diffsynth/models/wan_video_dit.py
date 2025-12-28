@@ -281,24 +281,30 @@ class GateModule(nn.Module):
         return x + gate * residual
 
 class DiTBlock(nn.Module):
-    def __init__(self, has_image_input: bool, dim: int, num_heads: int, ffn_dim: int, eps: float = 1e-6):
+    def __init__(self, has_image_input: bool, dim: int, num_heads: int, ffn_dim: int, eps: float = 1e-6, ptc_enabled: bool = True):
         super().__init__()
         self.dim = dim
         self.num_heads = num_heads
         self.ffn_dim = ffn_dim
 
         self.self_attn = SelfAttention(dim, num_heads, eps)
+        self.ptc_enabled = ptc_enabled
         self.cross_attn = CrossAttention(
             dim, num_heads, eps, has_image_input=has_image_input)
-        self.cross_attn_instance = CrossAttention_instance(dim, num_heads, eps)
         self.norm1 = nn.LayerNorm(dim, eps=eps, elementwise_affine=False)
         self.norm2 = nn.LayerNorm(dim, eps=eps, elementwise_affine=False)
         self.norm3 = nn.LayerNorm(dim, eps=eps)
-        self.norm4 = nn.LayerNorm(dim, eps=eps)
         self.ffn = nn.Sequential(nn.Linear(dim, ffn_dim), nn.GELU(
             approximate='tanh'), nn.Linear(ffn_dim, dim))
         self.modulation = nn.Parameter(torch.randn(1, 6, dim) / dim**0.5)
         self.gate = GateModule()
+        if ptc_enabled:
+            self.cross_attn_instance = CrossAttention_instance(dim, num_heads, eps)
+            self.norm4 = nn.LayerNorm(dim, eps=eps)
+        else:
+            self.cross_attn_instance = None
+            self.norm4 = None
+
 
     def forward(self, x, context, union_mask, first_masks, t_mod, freqs, check=False):
 
@@ -329,7 +335,7 @@ class DiTBlock(nn.Module):
         input_x = modulate(self.norm1(x), shift_msa, scale_msa)
         x = self.gate(x, gate_msa, self.self_attn(input_x, freqs))
         x = x + self.cross_attn(self.norm3(x), context)
-        if first_masks is not None and union_mask is not None:
+        if first_masks is not None and union_mask is not None and self.ptc_enabled:
             xx = self.norm4(x)
             cross_attn_instance_output = self.cross_attn_instance(xx, first_masks, union_mask)
             if first_masks is not None and union_mask is not None:
@@ -405,6 +411,7 @@ class WanModel(torch.nn.Module):
         require_vae_embedding: bool = True,
         require_clip_embedding: bool = True,
         fuse_vae_embedding_in_latents: bool = False,
+        ptc_enabled: bool = True,
     ):
         super().__init__()
         self.dim = dim
@@ -432,7 +439,7 @@ class WanModel(torch.nn.Module):
         self.time_projection = nn.Sequential(
             nn.SiLU(), nn.Linear(dim, dim * 6))
         self.blocks = nn.ModuleList([
-            DiTBlock(has_image_input, dim, num_heads, ffn_dim, eps)
+            DiTBlock(has_image_input, dim, num_heads, ffn_dim, eps, ptc_enabled=ptc_enabled)
             for _ in range(num_layers)
         ])
         self.head = Head(dim, out_dim, patch_size, eps)

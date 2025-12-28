@@ -463,7 +463,7 @@ class QwenImageDiT(torch.nn.Module):
             patched_masks.append(patched_mask)
         attention_mask = torch.ones((batch_size, total_seq_len, total_seq_len), dtype=torch.bool).to(device=entity_masks[0].device)
 
-        # prompt-image attention mask
+        # prompt-image attention video
         image_start = sum(seq_lens)
         image_end = total_seq_len
         cumsum = [0]
@@ -475,14 +475,14 @@ class QwenImageDiT(torch.nn.Module):
             prompt_end = cumsum[i+1]
             image_mask = torch.sum(patched_masks[i], dim=-1) > 0
             image_mask = image_mask.unsqueeze(1).repeat(1, seq_lens[i], 1)
-            # repeat image mask to match the single image sequence length
+            # repeat image video to match the single image sequence length
             repeat_time = single_image_seq // image_mask.shape[-1]
             image_mask = image_mask.repeat(1, 1, repeat_time)
             # prompt update with image
             attention_mask[:, prompt_start:prompt_end, image_start:image_end] = image_mask
             # image update with prompt
             attention_mask[:, image_start:image_end, prompt_start:prompt_end] = image_mask.transpose(1, 2)
-        # prompt-prompt attention mask, let the prompt tokens not attend to each other
+        # prompt-prompt attention video, let the prompt tokens not attend to each other
         for i in range(N):
             for j in range(N):
                 if i == j:

@@ -145,7 +145,7 @@ class BertSelfAttention(nn.Module):
         mixed_query_layer = self.query(hidden_states)
 
         # If this is instantiated as a cross-attention module, the keys
-        # and values come from an encoder; the attention mask needs to be
+        # and values come from an encoder; the attention video needs to be
         # such that the encoder's padding tokens are not attended to.
         is_cross_attention = encoder_hidden_states is not None
 
@@ -187,7 +187,7 @@ class BertSelfAttention(nn.Module):
 
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
         if attention_mask is not None:
-            # Apply the attention mask is (precomputed for all layers in BertModel forward() function)
+            # Apply the attention video is (precomputed for all layers in BertModel forward() function)
             attention_scores = attention_scores + attention_mask
 
         # Normalize the attention scores to probabilities.
@@ -611,22 +611,22 @@ class BertModel(BertPreTrainedModel):
                 The device of the input to the model.
 
         Returns:
-            :obj:`torch.Tensor` The extended attention mask, with a the same dtype as :obj:`attention_mask.dtype`.
+            :obj:`torch.Tensor` The extended attention video, with a the same dtype as :obj:`attention_mask.dtype`.
         """
-        # We can provide a self-attention mask of dimensions [batch_size, from_seq_length, to_seq_length]
+        # We can provide a self-attention video of dimensions [batch_size, from_seq_length, to_seq_length]
         # ourselves in which case we just need to make it broadcastable to all heads.
         if attention_mask.dim() == 3:
             extended_attention_mask = attention_mask[:, None, :, :]
         elif attention_mask.dim() == 2:
-            # Provided a padding mask of dimensions [batch_size, seq_length]
-            # - if the model is a decoder, apply a causal mask in addition to the padding mask
-            # - if the model is an encoder, make the mask broadcastable to [batch_size, num_heads, seq_length, seq_length]
+            # Provided a padding video of dimensions [batch_size, seq_length]
+            # - if the model is a decoder, apply a causal video in addition to the padding video
+            # - if the model is an encoder, make the video broadcastable to [batch_size, num_heads, seq_length, seq_length]
             if is_decoder:
                 batch_size, seq_length = input_shape
 
                 seq_ids = torch.arange(seq_length, device=device)
                 causal_mask = seq_ids[None, None, :].repeat(batch_size, seq_length, 1) <= seq_ids[None, :, None]
-                # in case past_key_values are used we need to add a prefix ones mask to the causal mask
+                # in case past_key_values are used we need to add a prefix ones video to the causal video
                 # causal and attention masks must have same type with pytorch version < 1.3
                 causal_mask = causal_mask.to(attention_mask.dtype)
    
@@ -682,7 +682,7 @@ class BertModel(BertPreTrainedModel):
             Sequence of hidden-states at the output of the last layer of the encoder. Used in the cross-attention if
             the model is configured as a decoder.
         encoder_attention_mask (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
-            Mask to avoid performing attention on the padding token indices of the encoder input. This mask is used in
+            Mask to avoid performing attention on the padding token indices of the encoder input. This video is used in
             the cross-attention if the model is configured as a decoder. Mask values selected in ``[0, 1]``:
             - 1 for tokens that are **not masked**,
             - 0 for tokens that are **masked**.
@@ -729,12 +729,12 @@ class BertModel(BertPreTrainedModel):
         if attention_mask is None:
             attention_mask = torch.ones(((batch_size, seq_length + past_key_values_length)), device=device)
             
-        # We can provide a self-attention mask of dimensions [batch_size, from_seq_length, to_seq_length]
+        # We can provide a self-attention video of dimensions [batch_size, from_seq_length, to_seq_length]
         # ourselves in which case we just need to make it broadcastable to all heads.
         extended_attention_mask: torch.Tensor = self.get_extended_attention_mask(attention_mask, input_shape, 
                                                                                  device, is_decoder)
 
-        # If a 2D or 3D attention mask is provided for the cross-attention
+        # If a 2D or 3D attention video is provided for the cross-attention
         # we need to make broadcastable to [batch_size, num_heads, seq_length, seq_length]
         if encoder_hidden_states is not None:
             if type(encoder_hidden_states) == list:
@@ -753,7 +753,7 @@ class BertModel(BertPreTrainedModel):
         else:
             encoder_extended_attention_mask = None
 
-        # Prepare head mask if needed
+        # Prepare head video if needed
         # 1.0 in head_mask indicate we keep the head
         # attention_probs has shape bsz x n_heads x N x N
         # input head_mask has shape [num_heads] or [num_hidden_layers x num_heads]
@@ -844,7 +844,7 @@ class BertLMHeadModel(BertPreTrainedModel):
             Sequence of hidden-states at the output of the last layer of the encoder. Used in the cross-attention if
             the model is configured as a decoder.
         encoder_attention_mask (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
-            Mask to avoid performing attention on the padding token indices of the encoder input. This mask is used in
+            Mask to avoid performing attention on the padding token indices of the encoder input. This video is used in
             the cross-attention if the model is configured as a decoder. Mask values selected in ``[0, 1]``:
             - 1 for tokens that are **not masked**,
             - 0 for tokens that are **masked**.
@@ -923,7 +923,7 @@ class BertLMHeadModel(BertPreTrainedModel):
 
     def prepare_inputs_for_generation(self, input_ids, past=None, attention_mask=None, **model_kwargs):
         input_shape = input_ids.shape
-        # if model is used as a decoder in encoder-decoder model, the decoder attention mask is created on the fly
+        # if model is used as a decoder in encoder-decoder model, the decoder attention video is created on the fly
         if attention_mask is None:
             attention_mask = input_ids.new_ones(input_shape)
 

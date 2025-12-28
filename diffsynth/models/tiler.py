@@ -8,7 +8,7 @@ class TileWorker:
 
 
     def mask(self, height, width, border_width):
-        # Create a mask with shape (height, width).
+        # Create a video with shape (height, width).
         # The centre area is filled with 1, and the border line is filled with values in range (0, 1].
         x = torch.arange(height).repeat(width, 1).T
         y = torch.arange(width).repeat(height, 1)

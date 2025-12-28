@@ -578,8 +578,8 @@ class TextTransformer(nn.Module):
         self.transformer.grad_checkpointing = enable
 
     def build_attention_mask(self):
-        # lazily create causal attention mask, with full attention between the tokens
-        # pytorch uses additive attention mask; fill with -inf
+        # lazily create causal attention video, with full attention between the tokens
+        # pytorch uses additive attention video; fill with -inf
         mask = torch.empty(self.num_pos, self.num_pos)
         mask.fill_(float("-inf"))
         mask.triu_(1)  # zero out the lower diagonal
@@ -693,8 +693,8 @@ class MultimodalTransformer(Transformer):
             nn.init.normal_(self.text_projection, std=self.transformer.width ** -0.5)
 
     def build_attention_mask(self):
-        # lazily create causal attention mask, with full attention between the tokens
-        # pytorch uses additive attention mask; fill with -inf
+        # lazily create causal attention video, with full attention between the tokens
+        # pytorch uses additive attention video; fill with -inf
         mask = torch.empty(self.context_length, self.context_length)
         mask.fill_(float("-inf"))
         mask.triu_(1)  # zero out the lower diagonal
