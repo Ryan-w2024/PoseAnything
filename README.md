@@ -2,7 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![arXiv](https://img.shields.io/badge/arXiv-2512.13465-b31b1b.svg)](http://arxiv.org/abs/2512.13465)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://ryan-w2024.github.io/project/PoseAnything/)
+[![Project Page](https://img.shields.io/badge/GitHub-Project_Page-181717?logo=github)](https://ryan-w2024.github.io/project/PoseAnything/)
 
 ## 📝 Introduction
 
