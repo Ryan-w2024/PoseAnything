@@ -99,7 +99,7 @@ bash test_without_ptc.sh
 
 | | | | |
 | :---: | :---: |:---: | :---: |
-| <video src="https://github.com/user-attachments/assets/4f2580f7-4fa2-4c36-b50c-9fc53ec60c20" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/dfc415bc-d27d-4e4e-82b9-0473720965c1" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/a49d5190-4878-46e7-85ac-c799f4538749" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/637bd5ff-73ee-45b3-b28d-f07b92a50531" width="100%" muted autoplay loop playsinline></video> | 
+| <video src="https://github.com/user-attachments/assets/a49d5190-4878-46e7-85ac-c799f4538749" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/637bd5ff-73ee-45b3-b28d-f07b92a50531" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/4f2580f7-4fa2-4c36-b50c-9fc53ec60c20" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/dfc415bc-d27d-4e4e-82b9-0473720965c1" width="100%" muted autoplay loop playsinline></video>  | 
 
 ## 🗃️ Data Process
 We also provide the code for automated skeleton extraction, which is built based on [BlumNet](https://github.com/cong-yang/BlumNet) and [Grounded-Sam-2](https://github.com/IDEA-Research/Grounded-SAM-2).
