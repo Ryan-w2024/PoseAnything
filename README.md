@@ -95,12 +95,11 @@ If you wish to test the version that does not include the PTC module, run the fo
 bash test_without_ptc.sh
 ```
 ✔ Tip: PoseAnything supports arbitrary skeleton inputs. For **strong** skeletal conditions (large motion/high density input), we suggest using a **smaller CFG scale or no CFG** for natural output. For **weak** skeletal conditions (small motion/low density input), **increase the CFG scale** to enhance fitting to the pose.
-### Demo Showcase
-
 To test the TikTok dataset, refer to the script below:
 ```bash
 bash test_tiktok.sh
 ```
+### Demo Showcase
 
 | | | | |
 | :---: | :---: |:---: | :---: |
