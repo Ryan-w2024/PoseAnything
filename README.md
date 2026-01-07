@@ -95,6 +95,7 @@ If you wish to test the version that does not include the PTC module, run the fo
 bash test_without_ptc.sh
 ```
 ✔ Tip: PoseAnything supports arbitrary skeleton inputs. For **strong** skeletal conditions (large motion/high density input), we suggest using a **smaller CFG scale or no CFG** for natural output. For **weak** skeletal conditions (small motion/low density input), **increase the CFG scale** to enhance fitting to the pose.
+
 To test the TikTok dataset, refer to the script below:
 ```bash
 bash test_tiktok.sh
@@ -105,6 +106,14 @@ bash test_tiktok.sh
 | :---: | :---: |:---: | :---: |
 | <video src="https://github.com/user-attachments/assets/a49d5190-4878-46e7-85ac-c799f4538749" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/637bd5ff-73ee-45b3-b28d-f07b92a50531" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/4f2580f7-4fa2-4c36-b50c-9fc53ec60c20" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/dfc415bc-d27d-4e4e-82b9-0473720965c1" width="100%" muted autoplay loop playsinline></video>  | 
 | <video src="https://github.com/user-attachments/assets/400e7a68-f983-4102-9188-7660b602d910" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/5a532ed1-9226-40d3-b2f4-520652975b37" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/11d7c88f-86b5-461c-80c7-a02f51b4ac83" width="100%" muted autoplay loop playsinline></video> | <video src="https://github.com/user-attachments/assets/eccd2155-22e8-4ca2-9490-6755022434ac" width="100%" muted autoplay loop playsinline></video>  | 
+
+
+## 🚀 Training
+We provide training scripts for the **DiT** module, which excludes the PTC (Part-aware Temporal Coherence) module to reduce VRAM consumption:
+```bash
+bash train_without_ptc.sh
+```
+Since adding the PTC module leads to high VRAM overhead, we suggest using the DeepSpeed framework for optimization.
 
 ## 🗃️ Data Process
 We also provide the code for automated skeleton extraction, which is built based on [BlumNet](https://github.com/cong-yang/BlumNet) and [Grounded-Sam-2](https://github.com/IDEA-Research/Grounded-SAM-2).
