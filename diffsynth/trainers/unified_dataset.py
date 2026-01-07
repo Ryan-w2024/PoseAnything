@@ -285,7 +285,7 @@ class ToAbsolutePath(DataProcessingOperator):
         self.base_path = base_path
         
     def __call__(self, data):
-        return os.path.join(self.base_path, "train", "videos", data)
+        return os.path.join(self.base_path, "train", "video", data)
 
 class UnifiedDataset(torch.utils.data.Dataset):
     def __init__(
@@ -405,7 +405,7 @@ class UnifiedDataset(torch.utils.data.Dataset):
                         data["condition_images"] = ast.literal_eval(data["condition_images"])
                         data["condition_index"] = ast.literal_eval(data["condition_index"])
                         video_name, _ = os.path.splitext(os.path.basename(data["video"]))
-                        data["condition_images"] = [os.path.join(self.base_path,"train","poses1",video_name,i) for i in data["condition_images"]]
+                        data["condition_images"] = [os.path.join(self.base_path,"train","skeleton_image",video_name,i) for i in data["condition_images"]]
                         data["condition_images"] = LoadSkeleton(self.num_frames, self.time_division_factor, self.time_division_remainder,
                                                                 frame_processor=ImageCropAndResize(self.height, self.width, self.max_pixels, self.height_division_factor, self.width_division_factor, self.max_size)
                                                                 )(data["condition_images"],data["condition_index"])
@@ -415,7 +415,7 @@ class UnifiedDataset(torch.utils.data.Dataset):
                         data["condition_images"] = ast.literal_eval(data["condition_images"])
                         data["condition_index"] = range(len(data["condition_images"]))
                         video_name, _ = os.path.splitext(os.path.basename(data["video"]))
-                        data["condition_images"] = [os.path.join(self.base_path, "train", "poses1",  i) for i
+                        data["condition_images"] = [os.path.join(self.base_path, "train", "skeleton_image",  i) for i
                                                     in data["condition_images"]]
                         data["condition_images"] = LoadSkeleton(self.num_frames, self.time_division_factor,
                                                                 self.time_division_remainder,

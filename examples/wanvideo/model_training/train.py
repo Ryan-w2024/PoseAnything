@@ -17,11 +17,16 @@ class WanTrainingModule(DiffusionTrainingModule):
         extra_inputs=None,
         max_timestep_boundary=1.0,
         min_timestep_boundary=0.0,
+        ptc_enabled=False,
     ):
         super().__init__()
         # Load models
         model_configs = self.parse_model_configs(model_paths, model_id_with_origin_paths, enable_fp8_training=False)
-        self.pipe = WanVideoPipeline.from_pretrained(torch_dtype=torch.bfloat16, device="cpu", model_configs=model_configs)
+        self.pipe = WanVideoPipeline.from_pretrained(
+            torch_dtype=torch.bfloat16, device="cpu",
+            model_configs=model_configs,
+            ptc_enabled=ptc_enabled
+        )
         
         # Training mode
         self.switch_pipe_to_training_mode(
@@ -81,18 +86,20 @@ class WanTrainingModule(DiffusionTrainingModule):
         return {**inputs_shared, **inputs_posi}
     
     
-    def forward(self, data, mlp_condition=False, view_condition=False, inputs=None):
+    def forward(self, data, inputs=None):
         if inputs is None: inputs = self.forward_preprocess(data)
         models = {name: getattr(self.pipe, name) for name in self.pipe.in_iteration_models}
-        loss = self.pipe.training_loss(**models, mlp_condition=mlp_condition, view_condition=view_condition, **inputs)
+        loss = self.pipe.training_loss(**models, **inputs)
         return loss
 
 
 if __name__ == "__main__":
     parser = wan_parser()
     parser.add_argument("--max_size", type=int, default=832)
+    parser.add_argument("--disable_ptc", action='store_true', help="If set, PTC modules will be disabled.")
     args = parser.parse_args()
-    print("max_size", args.max_size)
+    ptc_enabled = not args.disable_ptc
+    print("ptc_enabled", ptc_enabled)
     dataset = UnifiedDataset(
         base_path=args.dataset_base_path,
         metadata_path=args.dataset_metadata_path,
@@ -126,6 +133,7 @@ if __name__ == "__main__":
         extra_inputs=args.extra_inputs,
         max_timestep_boundary=args.max_timestep_boundary,
         min_timestep_boundary=args.min_timestep_boundary,
+        ptc_enabled=ptc_enabled,
     )
     os.makedirs(args.output_path, exist_ok=True)
     model_logger = ModelLogger(

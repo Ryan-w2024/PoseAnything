@@ -579,7 +579,7 @@ def launch_training_task(
                 if dataset.load_from_cache:
                     loss = model({}, inputs=data)
                 else:
-                    loss = model(data, mlp_condition=args.mlp_condition, view_condition=args.view_condition)
+                    loss = model(data)
                 epoch_loss_sum += loss.detach().item()
                 step_sum += 1
                 accelerator.backward(loss)
