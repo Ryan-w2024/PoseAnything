@@ -110,7 +110,7 @@ bash test_tiktok.sh
 
 
 ## 🚀 Training
-We provide training scripts for the **DiT** module, which excludes the PTC (Part-aware Temporal Coherence) module to reduce VRAM consumption.You need to modify the checkpoint beforehand to adapt the channel count of the patchify module to the newly added skeleton input.:
+We provide training scripts for the **DiT** module, which excludes the PTC (Part-aware Temporal Coherence) module to reduce VRAM consumption.You need to modify the checkpoint beforehand to adapt the channel count of the patchify module to the newly added skeleton input:
 ```bash
 python update_weight.py
 bash train_without_ptc.sh
