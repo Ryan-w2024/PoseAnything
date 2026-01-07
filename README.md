@@ -14,10 +14,11 @@ PoseAnything is a universal pose-guided video generation framework. It enables h
 
 We are committed to open-sourcing our work to the community as quickly as possible. Below is the short-term release plan:
 
-| No. | Content                             | Estimated Completion Time |
+| No. | Content                             | State|
 | :--- |:------------------------------------|:--------------------------|
 | **1** | **Model Enhanced Using Human Data** | **✅**      |
-| **2** | **XPose Dataset Release**           | **Within Two Weeks**      |
+| **2** | **Release Training Code** | **✅**      |
+| **3** | **XPose Dataset Release**           | **Within Two Weeks**      |
 
 Please monitor our repository for the latest code and dataset release announcements.
 
