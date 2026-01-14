@@ -18,7 +18,7 @@ We are committed to open-sourcing our work to the community as quickly as possib
 | :--- |:------------------------------------|:--------------------------|
 | **1** | **Model Enhanced Using Human Data** | **✅**      |
 | **2** | **Release Training Code** | **✅**      |
-| **3** | **XPose Dataset Release**           |   \href{https://huggingface.co/datasets/Ryan241005/XPose}{Hugging Face}    |
+| **3** | **XPose Dataset Release**           |  [Hugging Face](https://huggingface.co/datasets/Ryan241005/XPose)  |
 
 Please monitor our repository for the latest code and dataset release announcements.
 
